@@ -46,7 +46,7 @@ parser.add_argument('--config-file',
                     help="path to config file",
                     type=str,
                     )
-parser.add_argument("--local_rank", type=int, default=-1,
+parser.add_argument("--local-rank", type=int, default=-1,
                     help="For distributed training: local_rank")
 parser.add_argument('--seed', type=int, default=0,
                     help='random seed')
