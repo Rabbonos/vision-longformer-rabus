@@ -15,6 +15,15 @@ from .transforms import build_transforms
 
 from .dataset.utils.config_args import config_tsv_dataset_args
 
+from torchvision import datasets
+new_mirror = 'https://ossci-datasets.s3.amazonaws.com/mnist'
+datasets.MNIST.resources = [
+   ('/'.join([new_mirror, url.split('/')[-1]]), md5)
+   for url, md5 in datasets.MNIST.resources
+]
+
+def convert_to_rgb(image):
+                return image.convert("RGB")
 
 def build_dataset(cfg, is_train=True):
     """
@@ -42,12 +51,26 @@ def build_dataset(cfg, is_train=True):
                 datapath, data_map,
                 build_transforms(cfg, is_train)
             )
+        # elif dataset_name == "mnist":
+        #     dataset = torchvision.datasets.MNIST(
+        #         root=cfg.DATA.PATH, train=is_train, download=True,
+        #         transform=transforms.Compose([
+        #             transforms.ToTensor(),
+        #             transforms.Normalize((0.1307,), (0.3081,))
+        #         ])
+        #     )
+
+        
+
         elif dataset_name == "mnist":
             dataset = torchvision.datasets.MNIST(
-                root=cfg.DATA.PATH, train=is_train, download=True,
+                root=cfg.DATA.PATH, 
+                train=is_train, 
+                download=True,
                 transform=transforms.Compose([
+                    transforms.Lambda(convert_to_rgb),  # Use the named function here
                     transforms.ToTensor(),
-                    transforms.Normalize((0.1307,), (0.3081,))
+                    transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))  # Normalize for RGB
                 ])
             )
         elif dataset_name == "cifar":
